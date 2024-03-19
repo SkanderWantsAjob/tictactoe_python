@@ -23,20 +23,22 @@ def modifyboard(num, turn):
 
 leaveloop= False
 turn = 'X'
-turncounter=0
-def someonewon():
-    for row in gameboard:
-        if( all(cell == 'X' for cell in row ) or all (cell == 'O' for cell in row)):
-            return True
-    for x in range(3):
-        if (all(row[x]=='X' for row in gameboard ) or all(row[x]== 'O' for row in gameboard)):
-            return True
-    if all(gameboard[i][i] == 'X' for i in range(3)) or all(gameboard[i][2 - i] == 'X' for i in range(3)):
-        return True
-    if all(gameboard[i][i] == 'O' for i in range(3)) or all(gameboard[i][2 - i] == 'O' for i in range(3)):
-        return True
 
-    return False
+
+def someonelost():
+        for row in gameboard:
+            if(all(cell == row[0] for cell in row )):
+                return (True,row[0])
+        for x in range(3):
+            if (all(gameboard[x][i] == gameboard[x][0] for i in range(3))):
+                return (True,gameboard[x][0])
+        if (all(gameboard[i][2-i] == gameboard[0][2] for i in range(3))):
+            return (True, gameboard[0][2])
+        if (all(gameboard[i][i] == gameboard[0][0] for i in range(3))):
+            return (True, gameboard[0][0])
+        return(False, "")
+
+
 
 
 def playerturn():
@@ -58,8 +60,19 @@ def computerturn():
             modifyboard(cpuchoice, 'O')
             break
 
-gameover= False
-while (gameover == False):
+
+
+def chooseWhoGoesFirst():
+    order = 0
+    while(int(order) not in (2,1)):
+        order= input ("\nwho is first you or pc ? type 2 for you and type 1 for PC\n")
+    return (int(order))
+
+gameover= someonelost()
+
+turncounter = chooseWhoGoesFirst()
+print(gameover[0])
+while (not gameover[0]):
     if(turncounter % 2 == 0):
     #X turn
         printgameboard()
@@ -67,11 +80,12 @@ while (gameover == False):
     else:
         #O turn
         computerturn()
-    print(turncounter)
     turncounter += 1
-    gameover= someonewon()
-if (gameover == True):
-    print("SOMEONE WON I THINK")
+    gameover = someonelost()
+if (gameover[0] == True):
+    print("SOMEONE WON I THINK AND IT IS ")
+    print (f"this guy won : {gameover[1]}")
+
 print("FOR THE FINAL OUTPUT")
 printgameboard()
 
